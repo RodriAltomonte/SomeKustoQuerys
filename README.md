@@ -1,0 +1,2 @@
+# SomeKustoQuerys
+Algunas kusto Querys
