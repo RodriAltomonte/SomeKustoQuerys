@@ -1,0 +1,245 @@
+------- Kusto Inicial de los datos (1)
+
+let Query_ObtenerMail = view () {
+    Kusto query (2) -> kusto obtener mail
+};
+    let Query_ObtenerApp = view () {
+    Kusto query (3) -> kusto obtener APP
+};
+let Query_ObtenerIP = view () {
+    Kusto query (4) -> kusto obtener IP
+};       
+    union Query_ObtenerMail, Query_ObtenerApp , Query_ObtenerIP
+
+
+ ------- Kusto Inicial de los datos fin
+
+ ------- Obtener Datos Account (2)
+
+ let NewEntities = print NewEntitiesArray = dynamic("--Put Array--")
+ | mv-expand NewEntitiesArray
+ | evaluate bag_unpack(NewEntitiesArray);
+ NewEntities
+ | where kind == "Account"
+ | extend AllProperties = todynamic(properties)
+ | extend AditionalData = todynamic(properties["additionalData"])
+ | project datos = AditionalData["MailAddress"]
+ 
+ ------- Obtener Datos Account (2) Fin
+
+
+ ------- Obtener Datos Aplicacion(3)
+
+
+let NewEntities = print NewEntitiesArray = dynamic("--Put Array--")
+| mv-expand NewEntitiesArray
+| evaluate bag_unpack(NewEntitiesArray);
+NewEntities
+| where kind == "CloudApplication"
+| project datos = properties.appName
+
+
+------- Obtener Datos Aplicacion (3) Fin
+
+
+------- Obtener Datos IP(4)
+
+
+let NewEntities = print NewEntitiesArray = dynamic("--Put Array--")
+| mv-expand NewEntitiesArray
+| evaluate bag_unpack(NewEntitiesArray);
+NewEntities
+| where kind == "Ip"
+| project datos = properties.address
+
+
+------- Obtener Datos IP (4) Fin
+
+
+-- Array en las entities del incident
+
+Kind CloudApplication -> Properties
+
+{
+    "appId": 20893,
+    "appName": "Microsoft Exchange Online",
+    "instanceName": "Microsoft Exchange Online",
+    "friendlyName": "Microsoft Exchange Online"
+}
+
+Kind CloudApplication -> Ip
+
+
+{
+    "address": "202.55.135.28",
+    "friendlyName": "202.55.135.28"
+}
+
+
+-- tomar primer valor
+first(skip(triggerBody()?['object']?['properties']?['relatedEntities'],1))
+
+first(skip(triggerBody()?['object']?['properties']?['relatedEntities'],1))
+
+-- Array que devuelve el entities 
+
+[
+    {
+        "id": "/subscriptions/4a1ff0ff-d1cf-42e7-a556-308ef033dfe8/resourceGroups/cibersecurity-rg/providers/Microsoft.OperationalInsights/workspaces/cybersecurity-zu1-law/providers/Microsoft.SecurityInsights/Entities/1a28c56e-5378-186d-bead-62182f6d7632",
+        "name": "1a28c56e-5378-186d-bead-62182f6d7632",
+        "type": "Microsoft.SecurityInsights/Entities",
+        "kind": "Account",
+        "properties": {
+            "accountName": "mgualdoni",
+            "ntDomain": "bdsol",
+            "upnSuffix": "bdsol.com.ar",
+            "sid": "S-1-5-21-3049214018-245644864-2891042661-79872593",
+            "aadTenantId": "6271cdf9-5d1e-4eee-bf5d-e517b0b1389a",
+            "aadUserId": "58f6c476-3723-4e63-a6ed-92aa14e4da02",
+            "isDomainJoined": true,
+            "displayName": "Manuel Gualdoni",
+            "dnsDomain": "bdsol.com.ar",
+            "additionalData": {
+                "Sources": "[&quot;AzureActiveDirectory&quot;]",
+                "Department": "Core",
+                "GivenName": "Manuel",
+                "IsDeleted": "False",
+                "IsEnabled": "True",
+                "JobTitle": "Analista Funcional",
+                "MailAddress": "MGualdoni@bancodelsol.com",
+                "ManagerName": "Martin De Los Heros",
+                "OnPremisesDistinguishedName": "CN=B0312,OU=Employees,OU=Users,OU=CENTRAL,DC=bdsol,DC=com,DC=ar",
+                "OnPremisesSamAccountName": "Mgualdoni",
+                "Surname": "Gualdoni",
+                "TransitiveGroupsMembership": "[&quot;Banco del Sol&quot;,&quot;Tratamiento de incidentes&quot;,&quot;dg_Todos&quot;,&quot;T24IntegracionesyPasivas&quot;,&quot;sg_Atlassian_Users&quot;,&quot;sg_Workplace_Users&quot;,&quot;sg_SP-Release-R&quot;,&quot;sg_PaloAlto-GlobalProtect&quot;,&quot;UAT T24 - Banco del Sol/EY&quot;,&quot;OKRs 2021 - Banco del Sol&quot;,&quot;sg_AZ-AutoGestion&quot;,&quot;dg_AvisosPrisma&quot;,&quot;Experian PowerCurve&quot;,&quot;dg_Empleados&quot;,&quot;sg_MS365-E5&quot;,&quot;sg_AZ-IntuneWin10&quot;,&quot;Tecnología&quot;,&quot;sg_AZ-MFA_Authenticator&quot;,&quot;Team Core BdS&quot;,&quot;Comunidades de Práctica BDS&quot;]",
+                "UserType": "Member",
+                "UpnName": "Mgualdoni@bdsol.com.ar",
+                "SyncFromAad": "True",
+                "OfficeLocation": "HIT"
+            },
+            "friendlyName": "Manuel Gualdoni"
+        }
+    },
+    {
+        "id": "/subscriptions/4a1ff0ff-d1cf-42e7-a556-308ef033dfe8/resourceGroups/cibersecurity-rg/providers/Microsoft.OperationalInsights/workspaces/cybersecurity-zu1-law/providers/Microsoft.SecurityInsights/Entities/42d2dee0-1843-c1b4-34e1-243745976f65",
+        "name": "42d2dee0-1843-c1b4-34e1-243745976f65",
+        "type": "Microsoft.SecurityInsights/Entities",
+        "kind": "CloudApplication",
+        "properties": {
+            "appId": 11161,
+            "appName": "Office 365",
+            "instanceName": "Office 365",
+            "friendlyName": "Office 365"
+        }
+    },
+    {
+        "id": "/subscriptions/4a1ff0ff-d1cf-42e7-a556-308ef033dfe8/resourceGroups/cibersecurity-rg/providers/Microsoft.OperationalInsights/workspaces/cybersecurity-zu1-law/providers/Microsoft.SecurityInsights/Entities/75f70f59-24aa-fe72-7a9c-4ff912f00c59",
+        "name": "75f70f59-24aa-fe72-7a9c-4ff912f00c59",
+        "type": "Microsoft.SecurityInsights/Entities",
+        "kind": "Ip",
+        "properties": {
+            "address": "93.35.64.89",
+            "friendlyName": "93.35.64.89"
+        }
+    }
+]
+
+
+
+
+
+
+
+
+-- kusto obtener mail
+
+let NewEntities = print NewEntitiesArray = dynamic(
+[
+    {
+        "id": "/subscriptions/4a1ff0ff-d1cf-42e7-a556-308ef033dfe8/resourceGroups/cibersecurity-rg/providers/Microsoft.OperationalInsights/workspaces/cybersecurity-zu1-law/providers/Microsoft.SecurityInsights/Entities/1a28c56e-5378-186d-bead-62182f6d7632",
+        "name": "1a28c56e-5378-186d-bead-62182f6d7632",
+        "type": "Microsoft.SecurityInsights/Entities",
+        "kind": "Account",
+        "properties": {
+            "accountName": "mgualdoni",
+            "ntDomain": "bdsol",
+            "upnSuffix": "bdsol.com.ar",
+            "sid": "S-1-5-21-3049214018-245644864-2891042661-79872593",
+            "aadTenantId": "6271cdf9-5d1e-4eee-bf5d-e517b0b1389a",
+            "aadUserId": "58f6c476-3723-4e63-a6ed-92aa14e4da02",
+            "isDomainJoined": true,
+            "displayName": "Manuel Gualdoni",
+            "dnsDomain": "bdsol.com.ar",
+            "additionalData": {
+                "Sources": "[&quot;AzureActiveDirectory&quot;]",
+                "Department": "Core",
+                "GivenName": "Manuel",
+                "IsDeleted": "False",
+                "IsEnabled": "True",
+                "JobTitle": "Analista Funcional",
+                "MailAddress": "MGualdoni@bancodelsol.com",
+                "ManagerName": "Martin De Los Heros",
+                "OnPremisesDistinguishedName": "CN=B0312,OU=Employees,OU=Users,OU=CENTRAL,DC=bdsol,DC=com,DC=ar",
+                "OnPremisesSamAccountName": "Mgualdoni",
+                "Surname": "Gualdoni",
+                "TransitiveGroupsMembership": "[&quot;Banco del Sol&quot;,&quot;Tratamiento de incidentes&quot;,&quot;dg_Todos&quot;,&quot;T24IntegracionesyPasivas&quot;,&quot;sg_Atlassian_Users&quot;,&quot;sg_Workplace_Users&quot;,&quot;sg_SP-Release-R&quot;,&quot;sg_PaloAlto-GlobalProtect&quot;,&quot;UAT T24 - Banco del Sol/EY&quot;,&quot;OKRs 2021 - Banco del Sol&quot;,&quot;sg_AZ-AutoGestion&quot;,&quot;dg_AvisosPrisma&quot;,&quot;Experian PowerCurve&quot;,&quot;dg_Empleados&quot;,&quot;sg_MS365-E5&quot;,&quot;sg_AZ-IntuneWin10&quot;,&quot;Tecnología&quot;,&quot;sg_AZ-MFA_Authenticator&quot;,&quot;Team Core BdS&quot;,&quot;Comunidades de Práctica BDS&quot;]",
+                "UserType": "Member",
+                "UpnName": "Mgualdoni@bdsol.com.ar",
+                "SyncFromAad": "True",
+                "OfficeLocation": "HIT"
+            },
+            "friendlyName": "Manuel Gualdoni"
+        }
+    },
+    {
+        "id": "/subscriptions/4a1ff0ff-d1cf-42e7-a556-308ef033dfe8/resourceGroups/cibersecurity-rg/providers/Microsoft.OperationalInsights/workspaces/cybersecurity-zu1-law/providers/Microsoft.SecurityInsights/Entities/42d2dee0-1843-c1b4-34e1-243745976f65",
+        "name": "42d2dee0-1843-c1b4-34e1-243745976f65",
+        "type": "Microsoft.SecurityInsights/Entities",
+        "kind": "CloudApplication",
+        "properties": {
+            "appId": 11161,
+            "appName": "Office 365",
+            "instanceName": "Office 365",
+            "friendlyName": "Office 365"
+        }
+    },
+    {
+        "id": "/subscriptions/4a1ff0ff-d1cf-42e7-a556-308ef033dfe8/resourceGroups/cibersecurity-rg/providers/Microsoft.OperationalInsights/workspaces/cybersecurity-zu1-law/providers/Microsoft.SecurityInsights/Entities/75f70f59-24aa-fe72-7a9c-4ff912f00c59",
+        "name": "75f70f59-24aa-fe72-7a9c-4ff912f00c59",
+        "type": "Microsoft.SecurityInsights/Entities",
+        "kind": "Ip",
+        "properties": {
+            "address": "93.35.64.89",
+            "friendlyName": "93.35.64.89"
+        }
+    }
+]
+)
+| mv-expand NewEntitiesArray
+| evaluate bag_unpack(NewEntitiesArray);
+NewEntities
+| where kind == "Account"
+| extend AllProperties = todynamic(properties)
+| extend AditionalData = todynamic(properties["additionalData"])
+| project mail = AditionalData["MailAddress"]
+
+----------------------------------
+
+
+
+
+-------Final
+
+[{"tipoQuery":"Query_ObtenerMail","mail":"MGualdoni@bancodelsol.com","aplicacion":"Office","userIp":"93.35.64.8"},{"tipoQuery":"Query_ObtenerApp","mail":null,"aplicacion":"Office 365","userIp":null},{"tipoQuery":"Query_ObtenerIP","mail":null,"aplicacion":null,"userIp":"93.35.64.89"}]
+
+
+
+------------
+Obtener si se logueo con una ip address en especifico
+
+SigninLogs 
+| where UserId == "7c5e6964-ba6c-4166-84f9-93dfd7d01fa1"
+| where ConditionalAccessStatus == "success"
+| where IPAddress == "170.51.109.54"
+| project IPAddress
+| take 1
